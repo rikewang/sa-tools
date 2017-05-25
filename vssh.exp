@@ -1,0 +1,15 @@
+#!/usr/bin/expect
+
+set ip [ lindex $argv 0 ]
+set user [ lindex $argv 1 ] 
+set passwd [ lindex $argv 2 ] 
+
+spawn ssh $user@$ip
+expect  "(yes/no)?" {
+send  "yes\r"
+expect "password:"
+send "$passwd\r"
+} "password:" { send "$passwd\r"} "* host" {exit 1}
+
+interact 
+#expect eof

@@ -1,0 +1,18 @@
+#!/bin/bash
+
+which expect &> /dev/null
+if [ "$?" -ne "0" ]; then
+	echo "Install expect...."
+	yum install expect -y &> /dev/null 
+fi
+
+WORKDIR='/usr/local/sa/'
+IFS='\n'
+PS3='Please select a host: '
+select host_info in `cat ${WORKDIR}/etc/hosts | sed 's/^#.*//g' | sed '/^$/d'`
+do
+	ip=`echo $host_info | awk '{print $1}'`
+	user=`echo $host_info | awk '{print $2}'`
+	passwd=`echo $host_info | awk '{print $3}'`
+	expect ${WORKDIR}/bin/vssh.exp $ip $user "$passwd" 
+done
